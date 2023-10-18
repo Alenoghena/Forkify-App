@@ -1,0 +1,29 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _view = _interopRequireDefault(require("./view.js"));
+var _previewView = _interopRequireDefault(require("./previewView.js"));
+var _icons = _interopRequireDefault(require("url:../../img/icons.svg"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+// Parcel 2
+
+class bookmarkView extends _view.default {
+  _parentEl = document.querySelector('.bookmarks__list');
+  _errorMessage = 'No bookmark yet. Please find and bookmark a recipe';
+  _message = '';
+  _generateMarkup() {
+    console.log(this._data);
+    return this._data.map(this._generateMarkup).join('');
+  }
+  _clearInput() {
+    this._parentEl.querySelector('.bookmarks__list').value = '';
+  }
+  _generateMarkup() {
+    return this._data.map(bookmark => _previewView.default.render(bookmark, false)).join('');
+  }
+}
+var _default = new bookmarkView(); //this way, there can only be one ResultView because of instantiation.
+exports.default = _default;

@@ -1,0 +1,164 @@
+"use strict";
+
+require("core-js/modules/es.regexp.flags.js");
+require("core-js/modules/web.immediate.js");
+var model = _interopRequireWildcard(require("./model.js"));
+var _config = require("./config.js");
+var _recipeview = _interopRequireDefault(require("./views/recipeview.js"));
+var _searchView = _interopRequireDefault(require("./views/searchView.js"));
+var _resultView = _interopRequireDefault(require("./views/resultView.js"));
+var _paginationView = _interopRequireDefault(require("./views/paginationView.js"));
+var _bookmarks = _interopRequireDefault(require("./views/bookmarks.js"));
+var _addRecipeView = _interopRequireDefault(require("./views/addRecipeView.js"));
+var _helpers = require("./helpers.js");
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+//async/await
+// import { async } from 'regenerator-runtime';
+//Below is coming from parcel
+if (module.hot) {
+  module.hot.accept();
+}
+
+// const recipeContainer = document.querySelector('.recipe');
+
+// https://forkify-api.herokuapp.com/v2
+
+///////////////////////////////////////
+
+//This controller increases or reduces servings
+
+// timeout(5);
+const controlRecipes = async function () {
+  try {
+    const id = window.location.hash.slice();
+
+    // console.log(id);
+    //Guard clause
+    if (!id) return;
+    //0. Update resultview to mark selected search result
+    _resultView.default.update(model.getSearchResultPage(1));
+    _bookmarks.default.update(model.state.bookmarks);
+    //1. loading recipe
+
+    await model.loadRecipe(id); //this does not return anything, so we won't store it on any variable
+    //const { recipe } = model.state; //Destructure
+
+    _recipeview.default.renderSpinner();
+
+    //The question mark in url indicates a query string. It is most common way of basically sending variables over url. search is like variables and pizza like values. So search is query string and pizza what we want to search for.
+
+    //2. Rendering recipe
+    _recipeview.default.render(model.state.recipe);
+
+    //const searchView = new RecipeView(model.state.recipe);
+    //We used below ${icons} to replace src/img/icons.svg after importing above
+
+    //updating bookmark
+  } catch (err) {
+    _recipeview.default.renderError();
+    console.error(err);
+    _recipeview.default.renderMessage();
+  }
+};
+const controlSearchResults = async function () {
+  try {
+    _resultView.default.renderSpinner();
+    //1) get search query
+    const query = _searchView.default.getQuery();
+    if (!query) return; //guard clause
+    //2.) Load search results
+    await model.loadSearchResults(query);
+    // resultView.render(model.state.search.results);//The way we first did it
+    //3. render results
+    _resultView.default.render(model.getSearchResultPage(1));
+    //4. render initial pagination buttons
+    _paginationView.default.render(model.state.search);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// controlRecipes();
+
+// window.addEventListener('hashchange', controlRecipes);
+// window.addEventListener('load', controlRecipes);
+const controlPagination = function (goToPage) {
+  // console.log(goToPage);
+  //3. render results
+  _resultView.default.render(model.getSearchResultPage(goToPage));
+  //4. render initial pagination buttons
+  _paginationView.default.render(model.state.search);
+};
+const controlServings = function (btnIncrement) {
+  //1. Updating the recipe servings (in the state)
+  // console.log(btnIncrement);
+  model.updateServings(btnIncrement);
+  //2. Updating the recipe view
+  // recipeview.render(model.state.recipe);
+  _recipeview.default.update(model.state.recipe);
+};
+const controlAddDelBookmark = function () {
+  const id = window.location.hash.slice(1);
+  //1.add/remove bookmark
+  // console.log(model.deleteBookmark(model.state.recipe));
+  if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);else model.deleteBookmark(model.state.recipe); //using if statement here gets it deleted. so else statement is prefered.
+  //log to see bookmark
+  // console.log(model.state.recipe);
+  //22. update recipeview
+  _recipeview.default.update(model.state.recipe);
+  //3. update bookmarks
+
+  _bookmarks.default.render(model.state.bookmarks);
+};
+const controlBookmarks = function () {
+  _bookmarks.default.render(model.state.bookmarks);
+};
+const controlAddRecipe = async function (newRecipe) {
+  try {
+    // Show loading spinner
+    _addRecipeView.default.renderSpinner();
+
+    // Upload the new recipe data
+    await model.uploadRecipe(newRecipe);
+    console.log(model.state.recipe);
+
+    // Render recipe
+    _recipeview.default.render(model.state.recipe);
+
+    // Success message
+    _addRecipeView.default.renderMessage();
+
+    // Render bookmark view
+    _bookmarks.default.render(model.state.bookmarks);
+
+    // Change ID in URL using history API
+    //The pushState takes 3 args: state, title and url. the first 2 may be ignored as below
+    window.history.pushState(null, '', `#${model.state.recipe.id}`);
+    //we can also use history API for back and forward
+    // window.history.back();
+
+    // Close form window
+    setTimeout(function () {
+      _addRecipeView.default.toggleWindow();
+    }, _config.MODAL_CLOSE_SEC * 1000);
+  } catch (err) {
+    console.error('💥', err);
+    _addRecipeView.default.renderError(err.message);
+  }
+};
+//Subscriber function
+const init = function () {
+  _bookmarks.default.addhandlerRender(controlBookmarks);
+  _recipeview.default.addHandlerRender(controlRecipes);
+  _recipeview.default.addHandlerUpdateServings(controlServings);
+  _recipeview.default.addHandlerBookmark(controlAddDelBookmark);
+  _searchView.default.addHandlerSearch(controlSearchResults);
+  _paginationView.default.addHandlerClick(controlPagination);
+  _addRecipeView.default.addHandlerUpload(controlAddRecipe);
+};
+init();
+// console.log(new Date().getMonth());
+// console.log(Date.now());
+// console.log('TEST');

@@ -1,0 +1,12 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TIMEOUT_SEC = exports.API_URL = void 0;
+const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
+exports.API_URL = API_URL;
+const TIMEOUT_SEC = 10;
+
+//Put in this file constant variables to be reused across the project. It will make it easy to configure project by simply changing the entries here
+exports.TIMEOUT_SEC = TIMEOUT_SEC;

@@ -1,0 +1,21 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _view = _interopRequireDefault(require("./view.js"));
+var _previewView = _interopRequireDefault(require("./previewView.js"));
+var _icons = _interopRequireDefault(require("url:../../img/icons.svg"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+class ResultView extends _view.default {
+  _parentEl = document.querySelector('.results');
+  _errorMessage = 'No recipe found for your query! Please try another one';
+  _message = '';
+  _generateMarkup() {
+    console.log(this._data);
+    return this._data.map(result => _previewView.default.render(result, false)).join('');
+  }
+}
+var _default = new ResultView(); //this way, there can only be one ResultView because of instantiation.
+exports.default = _default;

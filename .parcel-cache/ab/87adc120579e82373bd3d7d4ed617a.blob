@@ -1,0 +1,38 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _view = _interopRequireDefault(require("./view.js"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+class bookmarkView extends _view.default {
+  _parentEl = document.querySelector('.bookmarks__list');
+  _errorMessage = 'No bookmark yet. Please find and bookmark a recipe';
+  _message = '';
+  _generateMarkup() {
+    console.log(this._data);
+    return this._data.map(this._generateMarkupPreview).join('');
+  }
+  _generateMarkupPreview(result) {
+    let id = window.location.hash.slice(1); //start from 1st element=>slice(1)
+    //Get selected preview result highlighted using id above
+    console.log(result.id);
+    console.log(id);
+    return `
+    <li class="preview">
+       <a class="preview__link ${result.id === id ? 'preview__link--active' : ''}" href="#${result.id}">
+         <figure class="preview__fig">
+           <img src="${result.image}" alt="${result.title}"/>
+         </figure>
+         <div class="preview__data">
+           <h4 class="preview__title">${result.title}</h4>
+           <p class="preview__publisher">${result.publisher}</p>
+         </div>
+       </a>
+     </li>
+  `;
+  }
+}
+var _default = new bookmarkView(); //this way, there can only be one ResultView because of instantiation.
+exports.default = _default;

@@ -1,0 +1,26 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _view = _interopRequireDefault(require("./view.js"));
+var _icons = _interopRequireDefault(require("url:../../img/icons.svg"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+class PaginationView extends _view.default {
+  _parentEl = document.querySelector('.pagination');
+  _generateMarkup() {
+    const numPages = this._data.results;
+    console.log(numPages);
+    //page1, and there are other pages
+    //page1 and no other pages
+    //last page
+    //other pages
+    return ` 
+   
+
+    `;
+  }
+}
+var _default = new PaginationView();
+exports.default = _default;

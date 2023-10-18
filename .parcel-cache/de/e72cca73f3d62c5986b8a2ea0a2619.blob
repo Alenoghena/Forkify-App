@@ -1,0 +1,21 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getJSON = void 0;
+//contains a couple of functions to be reused over and over again
+const getJSON = async function (url) {
+  try {
+    const res = await fetch(`${url}/${id}`
+    // `https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886`
+    );
+
+    const data = await res.json(); //await the response object (fetch fn)
+
+    if (!res.ok) throw new Error(`${data.message}[${res.status}]`); //data.msg is from API
+  } catch (err) {
+    alert(err);
+  }
+};
+exports.getJSON = getJSON;

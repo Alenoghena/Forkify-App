@@ -1,0 +1,22 @@
+{
+  "name": "starter",
+  "version": "1.0.0",
+  "description": "recipe application",
+  "main": "index.html",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "author": "Inaboya Joseph",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^2.0.0-beta.1"
+  },
+  "dependencies": {
+    "core-js": "^3.32.2",
+    "fractional": "^1.0.0",
+    "fractions": "^1.0.2",
+    "regenerator-runtime": "^0.13.11",
+    "sass": "^1.56.1"
+  }
+}

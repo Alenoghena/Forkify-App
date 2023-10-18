@@ -1,0 +1,18 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TIMEOUT_SEC = exports.RES_PER_PAGE = exports.MODAL_CLOSE_SEC = exports.KEY = exports.API_URL = void 0;
+const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes';
+exports.API_URL = API_URL;
+const TIMEOUT_SEC = 10;
+exports.TIMEOUT_SEC = TIMEOUT_SEC;
+const RES_PER_PAGE = 10;
+exports.RES_PER_PAGE = RES_PER_PAGE;
+const KEY = 'a30faed4-ad4a-401e-b664-9f8ccbdd3a4a';
+exports.KEY = KEY;
+const MODAL_CLOSE_SEC = 2.5;
+
+//Put in this file constant variables to be reused across the project. It will make it easy to configure project by simply changing the entries here
+exports.MODAL_CLOSE_SEC = MODAL_CLOSE_SEC;

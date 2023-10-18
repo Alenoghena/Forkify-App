@@ -1,0 +1,86 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _view = _interopRequireDefault(require("./view.js"));
+var _icons = _interopRequireDefault(require("url:../../img/icons.svg"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+class PaginationView extends _view.default {
+  _parentEl = document.querySelector('.pagination');
+  _renderTwobuttons(page) {
+    return `
+    <div class="pagination">
+    <button class="btn--inline pagination__btn--prev">
+      <svg class="search__icon">
+        <use href="${_icons.default}#icon-arrow-left"></use>
+      </svg>
+      <span>Page ${page - 1}</span>
+    </button>
+    <button class="btn--inline pagination__btn--next">
+      <span>Page ${page + 1}</span>
+      <svg class="search__icon">
+        <use href="${_icons.default}#icon-arrow-right"></use>
+      </svg>
+    </button>
+  </div>
+    `;
+  }
+  _renderRbutton(page) {
+    return `
+    <div class="pagination">
+    
+  </div>
+  <div>
+  <button class="btn--inline pagination__btn--next">
+      <span>Page ${page + 1}</span>
+      <svg class="search__icon">
+        <use href="${_icons.default}#icon-arrow-right"></use>
+      </svg>
+    </button>
+  </div>
+  </div>
+  `;
+  }
+  _renderLbutton(page) {
+    return `
+    <div class="pagination">
+    <button class="btn--inline pagination__btn--prev">
+      <svg class="search__icon">
+        <use href="${_icons.default}#icon-arrow-left"></use>
+      </svg>
+      <span>Page ${page - 1}</span>
+    </button>
+  </div>
+  <div>
+ 
+  </div>
+  </div>
+  `;
+  }
+  _generateMarkup() {
+    const currentPage = this._data.page;
+    const numPages = Math.ceil(this._data.results.length / this._data.resultPerPage);
+    console.log(numPages);
+
+    //page1, and there are other pages
+    if (currentPage === 1 && numPages > 1) {
+      return this._renderRbutton(currentPage + 1);
+    }
+    //page1 and no other pages
+    //Only first page
+    if (currentPage === 1 && numPages === 1) return;
+
+    //last page
+    if (currentPage === numPages && numPages > 1) {
+      return this._renderLbutton(currentPage);
+    }
+    //other pages
+    if (currentPage < numPages) {
+      return this._renderTwobuttons(currentPage);
+    }
+  }
+}
+var _default = new PaginationView();
+exports.default = _default;
