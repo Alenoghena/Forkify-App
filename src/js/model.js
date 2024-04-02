@@ -1,6 +1,4 @@
-import { async } from 'regenerator-runtime';
 import { API_URL, RES_PER_PAGE, KEY } from './config.js';
-// import { getJSON, sendJSON } from './helpers.js';
 import { AJAX } from './helpers.js';
 
 export const state = {
@@ -14,9 +12,6 @@ export const state = {
   bookmarks: [],
 };
 
-// export const state1 = {
-//   recipes: {},
-// };
 const createRecipeObject = function (data) {
   const { recipe } = data.data;
   return {
@@ -28,55 +23,30 @@ const createRecipeObject = function (data) {
     servings: recipe.servings,
     cookingTime: recipe.cooking_time,
     ingredients: recipe.ingredients,
-    ...(recipe.key && { key: recipe.key }), //The && operator used for short-circuiting. If recipe.key doesn't exist, nothing happens. if it does, the second part happens.
+    ...(recipe.key && { key: recipe.key }),
   };
 };
 
 export const loadRecipe = async function (id) {
   try {
     const data = await AJAX(`${API_URL}/${id}?key=${KEY}`);
-
-    // state.search.page = data.results;
-    console.log(data.data.recipe);
-    // console.log(data); // use this for subsequent code
-    // const res = await fetch(
-    //   `${API_URL}/${id}`
-    //   // `https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886`
-    // );
-    // const data = await res.json(); //await the response object (fetch fn)
-
-    // if (!res.ok) throw new Error(`${data.message}[${res.status}]`); //data.msg is from API
-
-    //re-formatting to remove unders core from variables
     state.recipe = createRecipeObject(data);
-    console.log(state.recipe.ingredients);
+
     //To bookmark when loaded
     if (state.bookmarks.some(bookmark => bookmark.id === id))
       state.recipe.bookmarked = true;
     else state.recipe.bookmarked = false;
   } catch (err) {
-    //Temp Error Handling
-    console.error(`${err} 💥💥💥`);
     throw err;
   }
 };
 
 export const loadSearchResults = async function (query) {
   try {
-    // state.search.query = query;
-    // console.log(query);
     const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`);
     const { recipes } = data.data;
 
-    // console.log(recipes);
-    // console.log(data);
-
-    // state1.recipes = {
-    //   publisher: recipes.publisher,
-    //   title: recipes.title,
-    //   imageUrl: recipes.image_url,
-    // };
-    console.log(recipes); //Below, we use map to create new object from recipes object
+    //Below, we use map to create new object from recipes object
     state.search.results = recipes.map(rec => {
       return {
         id: rec.id,
@@ -87,9 +57,7 @@ export const loadSearchResults = async function (query) {
       };
     });
     // state.search.page = 1;//To reset pagination numbersto beginning
-    // console.log(state.search.results);
   } catch (err) {
-    console.error(`${err} 💥💥💥`);
     throw err;
   }
 };
@@ -114,11 +82,8 @@ const persistBookmarks = function () {
   localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks));
 };
 export const addBookmark = function (recipe) {
-  //add bookmarks
-
   state.bookmarks.push(recipe);
 
-  console.log(state.bookmarks);
   //Mark current recipe as bookmarked
   if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
   persistBookmarks();
@@ -126,7 +91,6 @@ export const addBookmark = function (recipe) {
 
 export const deleteBookmark = function (recipe) {
   //Delete Bookmark
-  console.log(state.bookmarks);
   const index = state.bookmarks.findIndex(el => el.id === recipe.id);
 
   state.bookmarks.splice(index, 1);
@@ -142,7 +106,6 @@ const init = function () {
   if (storage) state.bookmarks = JSON.parse(storage);
 };
 init();
-console.log(state.bookmarks);
 
 const clearBookmarks = function () {
   localStorage.clear('bookmarks');

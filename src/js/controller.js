@@ -9,13 +9,11 @@ import addRecipeView from './views/addRecipeView.js';
 import { timeout } from './helpers.js';
 import 'core-js/stable'; //for polyfiling others, not async/await
 import 'regenerator-runtime/runtime'; //async/await
-// import { async } from 'regenerator-runtime';
+
 //Below is coming from parcel
 if (module.hot) {
   module.hot.accept();
 }
-
-// const recipeContainer = document.querySelector('.recipe');
 
 // https://forkify-api.herokuapp.com/v2
 
@@ -23,12 +21,10 @@ if (module.hot) {
 
 //This controller increases or reduces servings
 
-// timeout(5);
 const controlRecipes = async function () {
   try {
     const id = window.location.hash.slice(1);
 
-    // console.log(id);
     //Guard clause
     if (!id) return;
     //0. Update resultview to mark selected search result
@@ -37,22 +33,15 @@ const controlRecipes = async function () {
     //1. loading recipe
 
     await model.loadRecipe(id); //this does not return anything, so we won't store it on any variable
-    //const { recipe } = model.state; //Destructure
 
     recipeview.renderSpinner();
-
-    //The question mark in url indicates a query string. It is most common way of basically sending variables over url. search is like variables and pizza like values. So search is query string and pizza what we want to search for.
 
     //2. Rendering recipe
     recipeview.render(model.state.recipe);
 
-    //const searchView = new RecipeView(model.state.recipe);
-    //We used below ${icons} to replace src/img/icons.svg after importing above
-
     //updating bookmark
   } catch (err) {
     recipeview.renderError();
-    console.error(err);
     recipeview.renderMessage();
   }
 };
@@ -65,22 +54,17 @@ const controlSearchResults = async function () {
     if (!query) return; //guard clause
     //2.) Load search results
     await model.loadSearchResults(query);
-    // resultView.render(model.state.search.results);//The way we first did it
+
     //3. render results
     resultView.render(model.getSearchResultPage(1));
     //4. render initial pagination buttons
     paginationView.render(model.state.search);
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
 
-// controlRecipes();
-
-// window.addEventListener('hashchange', controlRecipes);
-// window.addEventListener('load', controlRecipes);
 const controlPagination = function (goToPage) {
-  // console.log(goToPage);
   //3. render results
   resultView.render(model.getSearchResultPage(goToPage));
   //4. render initial pagination buttons
@@ -89,22 +73,21 @@ const controlPagination = function (goToPage) {
 
 const controlServings = function (btnIncrement) {
   //1. Updating the recipe servings (in the state)
-  // console.log(btnIncrement);
+
   model.updateServings(btnIncrement);
   //2. Updating the recipe view
-  // recipeview.render(model.state.recipe);
+
   recipeview.update(model.state.recipe);
 };
 
 const controlAddDelBookmark = function () {
   // const id = window.location.hash.slice(1);
   //1.add/remove bookmark
-  // console.log(model.deleteBookmark(model.state.recipe));
+
   if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
   else model.deleteBookmark(model.state.recipe); //using if statement here gets it deleted. so else statement is prefered.
-  //log to see bookmark
-  // console.log(model.state.recipe);
-  //22. update recipeview
+
+  //2. update recipeview
   recipeview.update(model.state.recipe);
   //3. update bookmarks
 
@@ -122,7 +105,6 @@ const controlAddRecipe = async function (newRecipe) {
 
     // Upload the new recipe data
     await model.uploadRecipe(newRecipe);
-    console.log(model.state.recipe);
 
     // Render recipe
     recipeview.render(model.state.recipe);
@@ -144,7 +126,6 @@ const controlAddRecipe = async function (newRecipe) {
       addRecipeView.toggleWindow();
     }, MODAL_CLOSE_SEC * 1000);
   } catch (err) {
-    console.error('💥', err);
     addRecipeView.renderError(err.message);
   }
 };
@@ -160,6 +141,3 @@ const init = function () {
 };
 
 init();
-// console.log(new Date().getMonth());
-// console.log(Date.now());
-// console.log('TEST');
